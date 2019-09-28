@@ -4,12 +4,13 @@
 ## What does it do?
 It provides tools for electronic health record (EHR) phenotyping, that is, finding patients of interest that match specified patterns in clinical and administrative EHR data. Eureka stores these patterns in computable form, and it computes them rapidly in clinical datasets and databases, including i2b2 clinical data warehouses. It supports building a repository of phenotypes representing best practices in how to find patient populations of interest. See http://www.eurekaclinical.org/docs/analytics/ for more information.
 
-## Version 3.0 development series
-Latest release: [![Latest release](https://maven-badges.herokuapp.com/maven-central/org.eurekaclinical/eureka/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.eurekaclinical/eureka)
-
-Version 3 will break Eureka up into microservices.
-
 ## Version history
+Latest release:
+[![Latest release](https://maven-badges.herokuapp.com/maven-central/org.eurekaclinical/eureka/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.eurekaclinical/eureka)
+
+### Version 3.0
+Version 3 broke components of Eureka up into microservices. We rewrote the phenotype editing, cohort editing, and job submission screens. In addition, concept browsing is much faster and works better on tablet form factors. 
+
 ### Version 2.5.2
 As compared with version 1 of Eureka, version 2 primarily differs in much more efficient backend code for processing data from relational databases. The performance of spreadsheet data processing is also much better.
 
@@ -66,7 +67,8 @@ Typically, you build it by invoking `mvn clean install` at the command line. For
 You can build any of the modules separately by appending `-pl <module-name>` to your maven command, where `<module-name>` is the artifact id of the module.
 
 ## Performing system tests
-You can run this project in an embedded tomcat by executing `mvn tomcat7:run` after you have built it. It will be accessible in your web browser at https://localhost:8443/eureka-webapp/. Your username will be `superuser`.
+You can run this project in an embedded tomcat by executing `mvn tomcat7:run` after you have built it. You also must be running the
+eurekaclinical-analytics-webclient project. The eureka-webapp backend calls will then be accessible in your web browser at https://localhost:8000/eureka-webapp/. Your username will be `superuser`.
 
 ## Installation
 NOTE: we have [Ansible](http://www.ansible.com) provisioning scripts that automate the installation process. Contact use for details. The following provides detail on the steps that those scripts perform. We have omitted general steps such as installation of Tomcat, SSL certificates, and the like.

@@ -64,25 +64,26 @@ import org.protempa.proposition.value.AbsoluteTimeGranularity;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.persist.Transactional;
-import edu.emory.cci.aiw.cvrg.eureka.common.authentication.AuthorizedUserSupport;
+import edu.emory.cci.aiw.cvrg.eureka.etl.authentication.AuthorizedUserSupport;
 
 import org.eurekaclinical.eureka.client.comm.Job;
 import org.eurekaclinical.eureka.client.comm.JobFilter;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.JobRequest;
+import org.eurekaclinical.protempa.client.comm.JobRequest;
 import org.eurekaclinical.eureka.client.comm.JobSpec;
 import org.eurekaclinical.eureka.client.comm.SourceConfig;
 import org.eurekaclinical.eureka.client.comm.SourceConfigOption;
 import org.eurekaclinical.eureka.client.comm.Statistics;
-import edu.emory.cci.aiw.cvrg.eureka.common.entity.DestinationEntity;
-import edu.emory.cci.aiw.cvrg.eureka.common.entity.AuthorizedUserEntity;
-import edu.emory.cci.aiw.cvrg.eureka.common.entity.JobEntity;
+import edu.emory.cci.aiw.cvrg.eureka.etl.entity.DestinationEntity;
+import edu.emory.cci.aiw.cvrg.eureka.etl.entity.AuthorizedUserEntity;
+import edu.emory.cci.aiw.cvrg.eureka.etl.entity.JobEntity;
 import edu.emory.cci.aiw.cvrg.eureka.etl.config.EurekaProtempaConfigurations;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.DestinationDao;
-import edu.emory.cci.aiw.cvrg.eureka.common.dao.AuthorizedUserDao;
+import edu.emory.cci.aiw.cvrg.eureka.etl.dao.AuthorizedUserDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.config.EtlProperties;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JobDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.job.TaskManager;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dest.ProtempaDestinationFactory;
+import edu.emory.cci.aiw.cvrg.eureka.etl.job.Task;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -113,13 +114,15 @@ public class JobResource {
 	private final ProtempaDestinationFactory protempaDestinationFactory;
 	private final EtlProperties etlProperties;
 	private final Provider<EntityManager> entityManagerProvider;
+	private final Provider<Task> taskProvider;
 
 	@Inject
 	public JobResource(JobDao inJobDao, TaskManager inTaskManager,
 			AuthorizedUserDao inEtlUserDao, DestinationDao inDestinationDao,
 			EtlProperties inEtlProperties,
 			ProtempaDestinationFactory inProtempaDestinationFactory,
-			Provider<EntityManager> inEntityManagerProvider) {
+			Provider<EntityManager> inEntityManagerProvider,
+			Provider<Task> inTaskProvider) {
 		this.jobDao = inJobDao;
 		this.taskManager = inTaskManager;
 		this.etlUserDao = inEtlUserDao;
@@ -128,6 +131,8 @@ public class JobResource {
 		this.etlProperties = inEtlProperties;
 		this.protempaDestinationFactory = inProtempaDestinationFactory;
 		this.entityManagerProvider = inEntityManagerProvider;
+		this.taskProvider = inTaskProvider;
+		
 	}
 
 	@Transactional
@@ -169,7 +174,7 @@ public class JobResource {
 			@PathParam("jobId") Long inJobId, @PathParam("propId") String inPropId) {
 		Job job = getJob(request, inJobId);
 		String destinationId = job.getDestinationId();
-		DestinationEntity destEntity = this.destinationDao.getByName(destinationId);
+		DestinationEntity destEntity = this.destinationDao.getCurrentByName(destinationId);
 		if (destEntity != null) {
 			try {
 				Destination dest = this.protempaDestinationFactory.getInstance(destEntity, false);
@@ -265,12 +270,14 @@ public class JobResource {
 		} else {
 			dateTimeFilter = null;
 		}
-		this.taskManager.queueTask(jobEntity.getId(),
-				inJobRequest.getUserPropositions(),
-				inJobRequest.getPropositionIdsToShow(),
-				dateTimeFilter,
-				jobSpec.isUpdateData(),
-				prompts);
+		Task task = this.taskProvider.get();
+		task.setJobId(jobEntity.getId());
+		task.setPropositionDefinitions(inJobRequest.getUserPropositions());
+		task.setPropositionIdsToShow(inJobRequest.getPropositionIdsToShow());
+		task.setFilter(dateTimeFilter);
+		task.setUpdateData(jobSpec.isUpdateData());
+		task.setPrompts(prompts);
+		this.taskManager.queueTask(task);
 		return jobEntity.getId();
 	}
 	
@@ -299,7 +306,7 @@ public class JobResource {
 		EntityTransaction transaction = this.entityManagerProvider.get().getTransaction();
 		transaction.begin();
 		DestinationEntity destination
-				= this.destinationDao.getByName(destinationId);
+				= this.destinationDao.getCurrentByName(destinationId);
 		if (destination == null) {
 			transaction.rollback();
 			throw new HttpStatusException(Status.BAD_REQUEST, "Invalid destination " + job.getDestinationId());

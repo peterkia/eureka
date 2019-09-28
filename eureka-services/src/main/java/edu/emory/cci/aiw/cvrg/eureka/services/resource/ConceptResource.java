@@ -40,9 +40,11 @@
 package edu.emory.cci.aiw.cvrg.eureka.services.resource;
 
 import com.google.inject.Inject;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.EtlClient;
+
 import org.eurekaclinical.eureka.client.comm.SourceConfigParams;
 import org.eurekaclinical.eureka.client.comm.SystemPhenotype;
+import org.eurekaclinical.protempa.client.EurekaClinicalProtempaClient;
+
 import edu.emory.cci.aiw.cvrg.eureka.services.config.ServiceProperties;
 import edu.emory.cci.aiw.cvrg.eureka.services.finder.PropositionFindException;
 import edu.emory.cci.aiw.cvrg.eureka.services.finder.SystemPropositionFinder;
@@ -78,13 +80,13 @@ public class ConceptResource {
 	private final SystemPropositionFinder finder;
 	private final ServiceProperties serviceProperties;
 	private final SourceConfigResource sourceConfigResource;
-	private final EtlClient etlClient;
+	private final EurekaClinicalProtempaClient etlClient;
 	
 	@Inject
 	public ConceptResource(SystemPropositionFinder inFinder,
 			SourceConfigResource inSourceConfigResource,
 			ServiceProperties inServiceProperties,
-			EtlClient inEtlClient) {
+			EurekaClinicalProtempaClient inEtlClient) {
 		this.finder = inFinder;
 		this.serviceProperties = inServiceProperties;
 		this.sourceConfigResource = inSourceConfigResource;

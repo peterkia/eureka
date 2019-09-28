@@ -40,9 +40,9 @@ package edu.emory.cci.aiw.cvrg.eureka.etl.resource;
  * #L%
  */
 
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.EtlCohortDestination;
-import edu.emory.cci.aiw.cvrg.eureka.common.entity.CohortDestinationEntity;
-import edu.emory.cci.aiw.cvrg.eureka.common.entity.AuthorizedUserEntity;
+import org.eurekaclinical.protempa.client.comm.EtlCohortDestination;
+import edu.emory.cci.aiw.cvrg.eureka.etl.entity.CohortDestinationEntity;
+import edu.emory.cci.aiw.cvrg.eureka.etl.entity.AuthorizedUserEntity;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.EtlGroupDao;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +73,7 @@ class CohortDestinationsDTOExtractor extends DestinationsDTOExtractor<EtlCohortD
 		cohortDest.setUpdatedAt(destinationEntity.getEffectiveAt());
 		cohortDest.setGetStatisticsSupported(destinationEntity.isGetStatisticsSupported());
 		cohortDest.setAllowingQueryPropositionIds(destinationEntity.isAllowingQueryPropositionIds());
-		cohortDest.setRequiredPropositionIds(new ArrayList<String>(0));
+		cohortDest.setRequiredPropositionIds(new ArrayList<>(0));
 
 		return cohortDest;
 	}

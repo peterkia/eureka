@@ -1,5 +1,6 @@
 package edu.emory.cci.aiw.cvrg.eureka.webapp.config;
 
+import java.util.List;
 import org.eurekaclinical.standardapis.props.CasEurekaClinicalProperties;
 
 /*
@@ -41,17 +42,16 @@ import org.eurekaclinical.standardapis.props.CasEurekaClinicalProperties;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
 /**
  *
  * @author Andrew Post
  */
 public class WebappProperties extends CasEurekaClinicalProperties {
-	
+
 	public WebappProperties() {
 		super("/etc/eureka");
 	}
-	
+
 	public String getMajorVersion() {
 		return this.getValue("eureka.webapp.version.major");
 	}
@@ -76,28 +76,31 @@ public class WebappProperties extends CasEurekaClinicalProperties {
 	public String getUrl() {
 		return this.getValue("eureka.webapp.url");
 	}
-	
+
 	public String getUserWebappUrl() {
 		return this.getValue("eurekaclinical.userwebapp.url");
 	}
+
 	public String getUserServiceUrl() {
 		return this.getValue("eurekaclinical.userservice.url");
-	}         
+	}
+
+	public String getRegistryServiceUrl() {
+		return getValue("eurekaclinical.registryservice.url");
+	}
+
 	public boolean isEphiProhibited() {
 		return Boolean.parseBoolean(getValue("eureka.webapp.ephiprohibited"));
 	}
+
 	public boolean isDemoMode() {
 		return Boolean.parseBoolean(getValue("eureka.webapp.demomode"));
-	}
-
-	public String getUploadDir() {
-		return this.getValue("eureka.webapp.uploaddir");
 	}
 
 	public String getServiceUrl() {
 		return this.getValue("eureka.services.url");
 	}
-	
+
 	/**
 	 * Get the URL for the eureka-protempa-etl application.
 	 *
@@ -106,78 +109,19 @@ public class WebappProperties extends CasEurekaClinicalProperties {
 	public String getEtlUrl() {
 		return this.getValue("eureka.etl.url");
 	}
-	
-	public String getCohortsUrl() {
-		return this.getValue("eureka.cohorts.url");
-	}
 
 	@Override
 	public String getProxyCallbackServer() {
 		return this.getValue("eureka.webapp.callbackserver");
 	}
-	
+
 	public String getContactEmail() {
 		return this.getValue("eureka.webapp.contactemail");
 	}
 
-	public boolean isOAuthRegistrationEnabled() {
-		return isGoogleOAuthRegistrationEnabled() || isGitHubOAuthRegistrationEnabled() || isTwitterOAuthRegistrationEnabled() || isGlobusOAuthRegistrationEnabled();
-	}
-
-	public boolean isGoogleOAuthRegistrationEnabled() {
-		return getGoogleOAuthKey() != null && getGoogleOAuthSecret() != null;
-	}
-
-	public boolean isGitHubOAuthRegistrationEnabled() {
-		return getGitHubOAuthKey() != null && getGitHubOAuthSecret() != null;
-	}
-
-	public boolean isTwitterOAuthRegistrationEnabled() {
-		return getTwitterOAuthKey() != null && getTwitterOAuthSecret() != null;
-	}
-
-	public boolean isGlobusOAuthRegistrationEnabled() {
-		return getGlobusOAuthKey() != null && getGlobusOAuthSecret() != null;
-	}
-
-	public boolean isLocalAccountRegistrationEnabled() {
-		return Boolean.parseBoolean(getValue("eureka.webapp.localregistrationenabled"));
+	@Override
+	public List<String> getAllowedWebClientUrls() {
+		return getStringListValue("eureka.webapp.allowedwebclients");
 	}
 	
-	public boolean isRegistrationEnabled() {
-		return isLocalAccountRegistrationEnabled() || isOAuthRegistrationEnabled();
-	}
-
-	public String getGoogleOAuthKey() {
-		return getValue("eureka.webapp.googleoauthkey");
-	}
-
-	public String getGoogleOAuthSecret() {
-		return getValue("eureka.webapp.googleoauthsecret");
-	}
-
-	public String getGitHubOAuthKey() {
-		return getValue("eureka.webapp.githuboauthkey");
-	}
-
-	public String getGitHubOAuthSecret() {
-		return getValue("eureka.webapp.githuboauthsecret");
-	}
-
-	public String getTwitterOAuthKey() {
-		return getValue("eureka.webapp.twitteroauthkey");
-	}
-
-	public String getTwitterOAuthSecret() {
-		return getValue("eureka.webapp.twitteroauthsecret");
-	}
-
-	public String getGlobusOAuthKey() {
-		return getValue("eureka.webapp.globusoauthkey");
-	}
-
-	public String getGlobusOAuthSecret() {
-		return getValue("eureka.webapp.globusoauthsecret");
-	}
-
 }

@@ -43,7 +43,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.DestinationDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.EtlGroupDao;
-import edu.emory.cci.aiw.cvrg.eureka.common.dao.AuthorizedUserDao;
+import edu.emory.cci.aiw.cvrg.eureka.etl.dao.AuthorizedUserDao;
 
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JobDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JobEventDao;
@@ -56,9 +56,13 @@ import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JpaJobEventDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JpaSourceConfigDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.SourceConfigDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.DeidPerPatientParamsDao;
+import edu.emory.cci.aiw.cvrg.eureka.etl.dao.EncryptionAlgorithmDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.EurekaDeidConfigDao;
+import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JpaEncryptionAlgorithmDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JpaEurekaDeidConfigDao;
+import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JpaLinkDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.JpaRoleDao;
+import edu.emory.cci.aiw.cvrg.eureka.etl.dao.LinkDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dao.RoleDao;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dest.EurekaDeidConfigFactory;
 import edu.emory.cci.aiw.cvrg.eureka.etl.dest.JpaEurekaDeidConfigFactory;
@@ -82,5 +86,7 @@ public class AppTestModule extends AbstractModule {
 		bind(SourceConfigDao.class).to(JpaSourceConfigDao.class);
 		bind(EurekaDeidConfigFactory.class).to(JpaEurekaDeidConfigFactory.class);
 		bind(EurekaDeidConfigDao.class).to(JpaEurekaDeidConfigDao.class);
+		bind(LinkDao.class).to(JpaLinkDao.class);
+		bind(EncryptionAlgorithmDao.class).to(JpaEncryptionAlgorithmDao.class);
 	}
 }

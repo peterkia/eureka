@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eurekaclinical</groupId>
 	<artifactId>eureka</artifactId>
-	<version>3.0-Alpha-28-SNAPSHOT</version>
+	<version>3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Eureka! Clinical Analytics</name>
 	<description>Eureka! Clinical Analytics is a web application that
@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.eurekaclinical</groupId>
 		<artifactId>eurekaclinical-parent-standard-deps</artifactId>
-		<version>2-Beta-4</version>
+		<version>2</version>
 	</parent>
 	
 	<scm>
@@ -40,32 +40,37 @@
 		<currentStableVersion>1.8</currentStableVersion>
 		<poi-version>3.9</poi-version>
 		<jaxb-version>2.2.7</jaxb-version>
-		<protempa-version>4.0-Alpha-21</protempa-version>
-		<aiw-i2b2-etl-version>3.0-Alpha-22</aiw-i2b2-etl-version>
-		<aiw-neo4j-etl-version>2.1-Alpha-1</aiw-neo4j-etl-version>
+		<protempa-version>4.0</protempa-version>
+		<aiw-i2b2-etl-version>3.0</aiw-i2b2-etl-version>
+		<aiw-neo4j-etl-version>3.0</aiw-neo4j-etl-version>
 		<tomcat-plugin-version>1.1</tomcat-plugin-version>
 
 		<!-- properties for site creation -->
-		<javautil-version>4.0-Alpha-4</javautil-version>
+		<javautil-version>4.0</javautil-version>
 		<hibernate-hbm2ddl-auto>validate</hibernate-hbm2ddl-auto>
 
 		<!-- Clients that eureka depends on -->
-		<user-client-version>1.0-Alpha-25</user-client-version>
-		<eureka-client-version>3.0-Alpha-12</eureka-client-version>
-		<eurekaclinical-patient-set-client-version>1.0-Alpha-10</eurekaclinical-patient-set-client-version>
+		<user-client-version>1.0</user-client-version>
+		<eureka-client-version>3.0</eureka-client-version>
+		<eurekaclinical-patient-set-client-version>1.0</eurekaclinical-patient-set-client-version>
 
-		<cas-server-version>3.0-Alpha-22</cas-server-version>
-		<user-webapp-version>1.0-Alpha-25</user-webapp-version>
-		<user-service-version>1.0-Alpha-20</user-service-version>
+		<cas-server-version>3.0</cas-server-version>
+		<user-webapp-version>1.0</user-webapp-version>
+		<user-service-version>1.0.1</user-service-version>
 
 		<!-- transitive dependencies that CAS needs certain versions of...-->
 		<commons-codec-version>1.4</commons-codec-version>
 
 		<!-- embedded tomcat configuration -->
 		<tomcat.httpsPort>8443</tomcat.httpsPort>
+		<embedded-webserver-port>8000</embedded-webserver-port>
 		
-		<eurekaclinical-common-version>2.0-Alpha-28</eurekaclinical-common-version>
-		<eurekaclinical-ontology-version>2.0-Beta-4</eurekaclinical-ontology-version>
+		<eurekaclinical-common-version>2.0</eurekaclinical-common-version>
+		<eurekaclinical-standard-apis-version>2.0</eurekaclinical-standard-apis-version>
+		<eurekaclinical-ontology-version>2.0</eurekaclinical-ontology-version>
+		
+		<ec-registry-client-version>1.0</ec-registry-client-version>
+		<ec-registry-service-version>1.0</ec-registry-service-version>
 	</properties>
 
 	<licenses>
@@ -82,7 +87,6 @@
 	</licenses>
 
 	<modules>
-		<module>eureka-common</module>
 		<module>eureka-webapp</module>
 		<module>eureka-services</module>
 		<module>eureka-protempa-etl</module>
@@ -311,6 +315,27 @@
 							<outputDirectory>${project.build.directory}/eureka-config/eurekaclinical-user-service</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-dbmigration-from-eurekaclinical-registry-service</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.eurekaclinical</groupId>
+									<artifactId>eurekaclinical-registry-service</artifactId>
+									<version>${ec-registry-service-version}</version>
+									<type>war</type>
+								</artifactItem>
+							</artifactItems>
+							<includes>
+								WEB-INF/classes/dbmigration/changelog-master.xml
+							</includes>
+							<outputDirectory>${project.build.directory}/eureka-config/eurekaclinical-registry-service</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -318,7 +343,7 @@
 				<artifactId>liquibase-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>liquibase-populate-services-db</id>
+						<id>liquibase-populate-user-service-db</id>
 						<phase>process-classes</phase>
 						<goals>
 							<goal>update</goal>
@@ -352,6 +377,17 @@
 							</expressionVars>
 							<changeLogFile>${project.build.directory}/eureka-config/eurekaclinical-user-service/WEB-INF/classes/dbmigration/changelog-master.xml</changeLogFile>
 							<url>jdbc:h2:file:${project.build.directory}/eureka-db/eurekaclinical-user-service</url>
+						</configuration>
+					</execution>
+					<execution>
+						<id>liquibase-populate-registry-service-db</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<configuration>
+							<changeLogFile>${project.build.directory}/eureka-config/eurekaclinical-registry-service/WEB-INF/classes/dbmigration/changelog-master.xml</changeLogFile>
+							<url>jdbc:h2:file:${project.build.directory}/eureka-db/eurekaclinical-registry-service</url>
 						</configuration>
 					</execution>
 				</executions>
@@ -435,10 +471,17 @@
 							<version>${user-service-version}</version>
 							<type>war</type>
 							<asWebapp>true</asWebapp>
-						</webapp>                                                                                       
+						</webapp>
+						<webapp>
+							<groupId>org.eurekaclinical</groupId>
+							<artifactId>eurekaclinical-registry-service</artifactId>
+							<version>${ec-registry-service-version}</version>
+							<type>war</type>
+							<asWebapp>true</asWebapp>
+						</webapp>                                                                                  
 					</webapps>
 					<addContextWarDependencies>true</addContextWarDependencies>
-					<addWarDependenciesInClassloader>true</addWarDependenciesInClassloader>
+					<addWarDependenciesInClassloader>false</addWarDependenciesInClassloader>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -480,19 +523,7 @@
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>${jaxb-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eurekaclinical</groupId>
-				<artifactId>eureka-common</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eurekaclinical</groupId>
-				<artifactId>eureka-common</artifactId>
-				<version>${project.version}</version>
-				<scope>test</scope>
-				<type>test-jar</type>
-			</dependency>                                
+			</dependency>             
 			<dependency>
 				<groupId>org.eurekaclinical</groupId>
 				<artifactId>protempa-framework</artifactId>
@@ -548,6 +579,11 @@
 				<artifactId>eurekaclinical-common</artifactId>
 				<version>${eurekaclinical-common-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eurekaclinical</groupId>
+				<artifactId>eurekaclinical-standard-apis</artifactId>
+				<version>${eurekaclinical-standard-apis-version}</version>
+			</dependency>
 			<!-- These are pulled into eureka-services and eureka-protempa-etl
 			by other dependencies, but CAS requires them to be in
 			$CATALINA_HOME/lib. The versions CAS requires are newer than those
@@ -570,48 +606,17 @@
 				<artifactId>eurekaclinical-user-client</artifactId>
 				<version>${user-client-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eurekaclinical</groupId>
+				<artifactId>eurekaclinical-registry-client</artifactId>
+				<version>${ec-registry-client-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eurekaclinical</groupId>
+				<artifactId>eurekaclinical-registry-service</artifactId>
+				<version>${ec-registry-service-version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
-	<profiles>
-		<profile>
-			<id>release-profile</id>
-			<properties>
-				<eureka.stage>PRODUCTION</eureka.stage>
-			</properties>
-		</profile>
-		<profile>
-			<id>eureka-tomcat-local</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>tomcat-maven-plugin</artifactId>
-						<version>${tomcat-plugin-version}</version>
-						<configuration>
-							<url>${local.url}</url>
-							<server>eureka.tomcat.local</server>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>eureka-tomcat-dev</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>tomcat-maven-plugin</artifactId>
-						<version>${tomcat-plugin-version}</version>
-						<configuration>
-							<url>${dev.url}</url>
-							<server>eureka.tomcat.dev</server>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
 

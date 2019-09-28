@@ -26,14 +26,12 @@ This project includes:
   Apache FreeMarker under Apache License, Version 2.0
   Apache POI under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
-  Commons Logging under The Apache Software License, Version 2.0
   ConcurrentLinkedHashMap under The Apache Software License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   Datastore under Apache License, Version 2.0
   dom4j under BSD License
   Drools :: Rete-OO Core under The Apache Software License, Version 2.0
-  Eureka Common under Apache License, Version 2.0 or GNU General Public License, Version 3
   Eureka Protempa ETL under Apache License, Version 2.0 or GNU General Public License, Version 3
   Eureka Services under Apache License, Version 2.0 or GNU General Public License, Version 3
   Eureka WebApp under Apache License, Version 2.0 or GNU General Public License, Version 3
@@ -42,8 +40,10 @@ This project includes:
   Eureka! Clinical Common under Apache License, Version 2.0
   Eureka! Clinical Ontology Installation Files under Apache License, Version 2.0
   Eureka! Clinical Patient Set Client under Apache License, Version 2.0
+  Eureka! Clinical Registry Client under Apache License, Version 2.0
   Eureka! Clinical Standard APIs under Apache License, Version 2.0
   Eureka! Clinical User Client under Apache License, Version 2.0
+  eurekaclinical-protempa-client under Apache License, Version 2.0
   Google Guice - Core Library under The Apache Software License, Version 2.0
   Google Guice - Extensions - JNDI under The Apache Software License, Version 2.0
   Google Guice - Extensions - Persist under The Apache Software License, Version 2.0

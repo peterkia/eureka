@@ -44,13 +44,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.AppProperties;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.AppPropertiesLinks;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.AppPropertiesModes;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.AppPropertiesRegistration;
+import edu.emory.cci.aiw.cvrg.eureka.services.comm.AppProperties;
+import edu.emory.cci.aiw.cvrg.eureka.services.comm.AppPropertiesLinks;
+import edu.emory.cci.aiw.cvrg.eureka.services.comm.AppPropertiesModes;
+import edu.emory.cci.aiw.cvrg.eureka.services.comm.AppPropertiesRegistration;
+import edu.emory.cci.aiw.cvrg.eureka.services.props.PublicUrlGenerator;
+import edu.emory.cci.aiw.cvrg.eureka.services.props.SupportUri;
 
-import edu.emory.cci.aiw.cvrg.eureka.common.props.PublicUrlGenerator;
-import edu.emory.cci.aiw.cvrg.eureka.common.props.SupportUri;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.inject.Singleton;
@@ -98,8 +98,6 @@ public class ServiceProperties extends CasJerseyEurekaClinicalProperties {
 	 */
 	public AppPropertiesLinks getAppPropertiesLinks() {
 		this.appPropertiesLinks = new AppPropertiesLinks();
-		this.appPropertiesLinks.setUserWebappUrl(this.getValue("eurekaclinical.userwebapp.url"));   
-		this.appPropertiesLinks.setUserServiceUrl(this.getValue("eurekaclinical.userservice.url")); 
 		this.appPropertiesLinks.setSupportUri(this.getSupportUri());
 		this.appPropertiesLinks.setOrganizationName(this.getValue("project.organization.name"));
 		return this.appPropertiesLinks;
@@ -242,46 +240,6 @@ public class ServiceProperties extends CasJerseyEurekaClinicalProperties {
 	}
 
 	/**
-	 * Get the number of hours to keep a user registration without verification,
-	 * before deleting it from the database.
-	 *
-	 * @return The number of hours listed in the configuration, and 24 if the
-	 * configuration is not found.
-	 */
-	public int getRegistrationTimeout() {
-		return this.getIntValue("eureka.services.registration.timeout", 24);
-	}
-
-	/**
-	 * Get email address in the From header.
-	 *
-	 * @return an email address.
-	 */
-	public String getFromEmailAddress() {
-		return this.getValue("eureka.services.email.from");
-	}
-
-	/**
-	 * Get the verification email subject line.
-	 *
-	 * @return The subject for the verification email.
-	 */
-	public String getVerificationEmailSubject() {
-		return this.getValue(
-				"eureka.services.email.verify.subject");
-	}
-
-	/**
-	 * Get the activation email subject line.
-	 *
-	 * @return The subject for the activation email.
-	 */
-	public String getActivationEmailSubject() {
-		return this.getValue(
-				"eureka.services.email.activation.subject");
-	}
-
-	/**
 	 * Get the base URL for the services layer for external users.
 	 *
 	 * @param request the HTTP request, which will be used to generate a
@@ -297,37 +255,6 @@ public class ServiceProperties extends CasJerseyEurekaClinicalProperties {
 			servicesUrl += (servicesUrl.endsWith("/") ? "" : "/") + "eureka-services";
 		}
 		return servicesUrl;
-	}
-
-	/**
-	 * Get the verification base URL, to be used in sending a verification email
-	 * to the user.
-	 *
-	 * @return The verification base URL, as found in the application
-	 * configuration file.
-	 */
-	public String getVerificationUrl() {
-		String verUrl = getApplicationUrl();
-		return verUrl + (verUrl.endsWith("/") ? "" : "/") + "verify?code=";
-	}
-
-	/**
-	 * Get the password change email subject line.
-	 *
-	 * @return The email subject line.
-	 */
-	public String getPasswordChangeEmailSubject() {
-		return this.getValue(
-				"eureka.services.email.password.subject");
-	}
-
-	/**
-	 * Gets the subject line for a password reset email.
-	 *
-	 * @return The subject line.
-	 */
-	public String getPasswordResetEmailSubject() {
-		return this.getValue("eureka.services.email.reset.subject");
 	}
 
 	/**

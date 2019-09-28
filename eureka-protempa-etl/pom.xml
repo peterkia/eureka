@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.eurekaclinical</groupId>
 		<artifactId>eureka</artifactId>
-		<version>3.0-Alpha-28-SNAPSHOT</version>
+		<version>3.1-SNAPSHOT</version>
 	</parent>
 	
 	<build>
@@ -143,7 +143,14 @@
 						</goals>
 						<configuration>
 							<driver>org.h2.Driver</driver>
-							<url>jdbc:h2:file:${project.build.directory}/eureka-db/i2b2-data-schema;INIT=RUNSCRIPT FROM '${project.build.directory}/eureka-config/sql/i2b2_data_tables_1_7_h2.sql'\;RUNSCRIPT FROM '${project.build.directory}/eureka-config/sql/mock_stored_procedures_h2.sql'</url>
+							<url>jdbc:h2:file:${project.build.directory}/eureka-db/i2b2-data-schema</url>
+							<fileset>
+							 	<basedir>${project.build.directory}</basedir>
+							 	<includes>
+							 		<include>eureka-config/sql/i2b2_data_tables_1_7_h2.sql</include>
+							 		<include>eureka-config/sql/mock_stored_procedures_h2.sql</include>
+							 	</includes>
+							</fileset>
 							<sqlCommand />
 						</configuration>
 					</execution>
@@ -156,9 +163,26 @@
 					<systemPropertyVariables>
 						<eureka.config.dir>${project.build.directory}/test-classes/eureka-config/eureka</eureka.config.dir>
 					</systemPropertyVariables>
+					<workingDirectory>${project.build.directory}</workingDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>application.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<testResources>
 			<testResource>
 				<directory>${project.basedir}/src/test/resources</directory>
@@ -182,16 +206,6 @@
 		<dependency>
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eurekaclinical</groupId>
-			<artifactId>eureka-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eurekaclinical</groupId>
-			<artifactId>eureka-common</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eurekaclinical</groupId>
@@ -244,9 +258,18 @@
 			<version>${eurekaclinical-ontology-version}</version>
 			<scope>provided</scope>
 		</dependency>
+				<dependency>
+			<groupId>org.eurekaclinical</groupId>
+			<artifactId>eureka-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.eurekaclinical</groupId>
 			<artifactId>eurekaclinical-patient-set-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eurekaclinical</groupId>
+			<artifactId>eurekaclinical-protempa-client</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

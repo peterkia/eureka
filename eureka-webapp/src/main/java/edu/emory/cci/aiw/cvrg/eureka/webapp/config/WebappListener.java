@@ -39,18 +39,19 @@ package edu.emory.cci.aiw.cvrg.eureka.webapp.config;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.EtlClientProvider;
+
 import com.google.inject.Injector;
 import javax.servlet.ServletContextEvent;
 
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.EtlClient;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.ServicesClient;
+
+import edu.emory.cci.aiw.cvrg.eureka.webapp.comm.clients.EtlClientProvider;
+
 import javax.servlet.ServletContext;
+import org.eurekaclinical.common.config.ApiGatewayServletModule;
 import org.eurekaclinical.common.config.ClientSessionListener;
 import org.eurekaclinical.common.config.InjectorSupport;
-import org.eurekaclinical.user.client.EurekaClinicalUserClient;
 
 /**
  *
@@ -63,6 +64,7 @@ public class WebappListener extends GuiceServletContextListener {
 	private final EurekaClinicalUserClientProvider userClientProvider;
 	private final ServicesClientProvider servicesClientProvider;
 	private final EtlClientProvider etlClientProvider;
+	private final EurekaClinicalRegistryClientProvider registryClientProvider;
 	private Injector injector;
 
 	public WebappListener() {
@@ -70,18 +72,19 @@ public class WebappListener extends GuiceServletContextListener {
 		this.servicesClientProvider = new ServicesClientProvider(this.webappProperties.getServiceUrl());
 		this.etlClientProvider = new EtlClientProvider(this.webappProperties.getEtlUrl());
 		this.userClientProvider = new EurekaClinicalUserClientProvider(this.webappProperties.getUserServiceUrl());
+		this.registryClientProvider = new EurekaClinicalRegistryClientProvider(this.webappProperties.getRegistryServiceUrl());
 	}
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		super.contextInitialized(servletContextEvent);
 		ServletContext servletContext = servletContextEvent.getServletContext();
-		servletContext.addListener(new ClientSessionListener(EurekaClinicalUserClient.class));
-		servletContext.addListener(new ClientSessionListener(ServicesClient.class));
-		servletContext.addListener(new ClientSessionListener(EtlClient.class));
+		servletContext.addListener(new ClientSessionListener());
 		servletContext.setAttribute(
 				"webappProperties", this.webappProperties);
 	}
+
+
 
 	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
@@ -94,8 +97,8 @@ public class WebappListener extends GuiceServletContextListener {
 	protected Injector getInjector() {
 		this.injector = new InjectorSupport(
 				new Module[]{
-					new AppModule(this.webappProperties, this.servicesClientProvider, this.etlClientProvider, this.userClientProvider),
-					new ServletModule(this.webappProperties)
+					new AppModule(this.webappProperties, this.servicesClientProvider, this.etlClientProvider, this.userClientProvider, this.registryClientProvider),
+					new ApiGatewayServletModule(this.webappProperties)
 				},
 				this.webappProperties).getInjector();
 		return this.injector;

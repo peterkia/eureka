@@ -39,15 +39,16 @@ package edu.emory.cci.aiw.cvrg.eureka.webapp.config;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.EtlClientProvider;
+import edu.emory.cci.aiw.cvrg.eureka.webapp.comm.clients.EtlClientProvider;
 import edu.emory.cci.aiw.cvrg.eureka.webapp.client.WebappRouterTable;
 import com.google.inject.AbstractModule;
 import com.google.inject.servlet.SessionScoped;
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.EtlClient;
+import edu.emory.cci.aiw.cvrg.eureka.webapp.comm.clients.EtlClient;
 
-import edu.emory.cci.aiw.cvrg.eureka.common.comm.clients.ServicesClient;
+import edu.emory.cci.aiw.cvrg.eureka.webapp.comm.clients.ServicesClient;
 import org.eurekaclinical.common.comm.clients.AuthorizingEurekaClinicalClient;
 import org.eurekaclinical.common.comm.clients.RouterTable;
+import org.eurekaclinical.registry.client.EurekaClinicalRegistryClient;
 import org.eurekaclinical.standardapis.props.CasEurekaClinicalProperties;
 import org.eurekaclinical.user.client.EurekaClinicalUserClient;
 
@@ -61,24 +62,26 @@ class AppModule extends AbstractModule {
 	private final EurekaClinicalUserClientProvider userClientProvider;
 	private final EtlClientProvider etlClientProvider;
 	private final ServicesClientProvider servicesClientProvider;
+	private final EurekaClinicalRegistryClientProvider registryClientProvider;
 
-	AppModule(WebappProperties webappProperties, ServicesClientProvider inServicesClientProvider, EtlClientProvider inEtlClientProvider, EurekaClinicalUserClientProvider inUserClient) {
+	AppModule(WebappProperties webappProperties, ServicesClientProvider inServicesClientProvider, EtlClientProvider inEtlClientProvider, EurekaClinicalUserClientProvider inUserClient, EurekaClinicalRegistryClientProvider inRegistryClient) {
 		assert webappProperties != null : "webappProperties cannot be null";
 		this.webappProperties = webappProperties;
 		this.userClientProvider = inUserClient;
 		this.servicesClientProvider = inServicesClientProvider;
 		this.etlClientProvider = inEtlClientProvider;
+		this.registryClientProvider = inRegistryClient;
 	}
 
 	@Override
 	protected void configure() {
-		bind(RouterTable.class).to(WebappRouterTable.class);
+		bind(RouterTable.class).to(WebappRouterTable.class).in(SessionScoped.class);
 		bind(WebappProperties.class).toInstance(this.webappProperties);
 		bind(CasEurekaClinicalProperties.class).toInstance(this.webappProperties);
 		bind(ServicesClient.class).toProvider(this.servicesClientProvider).in(SessionScoped.class);
 		bind(EtlClient.class).toProvider(this.etlClientProvider).in(SessionScoped.class);
 		bind(EurekaClinicalUserClient.class).toProvider(this.userClientProvider).in(SessionScoped.class);
-		bind(AuthorizingEurekaClinicalClient.class).toProvider(this.userClientProvider).in(SessionScoped.class);
+		bind(EurekaClinicalRegistryClient.class).toProvider(this.registryClientProvider).in(SessionScoped.class);
 	}
 
 }
